@@ -1,54 +1,50 @@
 #include "scanner.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
 
-enum Tokens {FDT = EOF, SEP = ','};
 char caracter;
-char cadena[100];
-char aux[1];
+int i;
+  
+struct token get_token(){
+// ini token
+  token.tipo=0;
+  token.lexema[0]='\0';
+  caracter=getchar();
+// comienza a procesar entradas
+  while(caracter != EOF){
 
-bool esToken(char c){
+  if(caracter == ','){
 
-  if(isspace(c)){
-    return false;
-  }
+      token.tipo=SEP;    
+      token.lexema[0]=',';
+      token.lexema[1]='\0';
 
-  return true;
-}
-
-void analisis(FILE * archivo){
-  while((caracter=getc(archivo)) != FDT){
-
-  if(esToken(caracter)){
-
-    if(caracter==SEP){
-      
-      if(cadena[0] != '\0'){
-        printf("Cadena: %s \n",cadena);
-        cadena[0]='\0';  
-      }
-
-      printf("Separador: %c \n",caracter);
-
+      return token;
+     
     }else{
-      aux[0]=caracter;
-      strcat(cadena,aux);
-    }
-    
-    }
-  
-  }//fin ciclo  
-}
-  
-int get_token(){
 
-  FILE *archivo = fopen("entrada.txt", "r");
-  analisis(archivo);
-  fclose(archivo);
-  printf("Fin de texto:\n");
-  return 0;
+      if(!isspace(caracter)){
+        i=0;
+        do{  
+      
+          token.lexema[i]=caracter;
+          i++;
+          caracter=getchar();
+        }while((caracter!=',') && !isspace(caracter) && caracter != EOF); 
+        //procesa caracteres alfanuméricos
+
+      token.lexema[i]='\0';
+      ungetc(caracter,stdin);
+      token.tipo=CADENA;
+
+      return token;
+    }
+  }
+  caracter=getchar();
+  }//fin proceso de entradas
+
+  token.tipo=FDT;
+  token.lexema[0]='\0';
+
+  return token;
 
 }//fin función principal
 
